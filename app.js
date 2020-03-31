@@ -77,8 +77,7 @@ var UIController = (function() {
                     </div></div></div>`;
             } else if (type === "exp") {
                 element = DOMStrings.expenseContainer;
-                html = `<div class="item clearfix" id="expense-%id%"><div class = "item__description">%description%</div><
-                div class = "right clearfix" ><div class = "item__value">-%value%</div><div class = "item__percentage"> 21 % </div> 
+                html = `<div class="item clearfix" id="expense-%id%"><div class = "item__description">%description%</div><div class = "right clearfix"><div class = "item__value">-%value%</div><div class = "item__percentage"> 21 % </div> 
                 <div class = "item__delete"><button class = "item__delete--btn"><i class = "ion-ios-close-outline"></i></button>
                     </div></div ></div>`;
             }
@@ -88,6 +87,20 @@ var UIController = (function() {
             newHtml = newHtml.replace("%value%", obj.value);
 
             document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
+        },
+
+        clearFields: function() {
+            var fields, fieldsArr;
+
+            fields = document.querySelectorAll(DOMStrings.inputDescription + ', ' + DOMStrings.inputValue);
+
+            fieldsArr = Array.prototype.slice.call(fields);
+
+            fieldsArr.forEach(function(element, index, arr) {
+                element.value = '';
+            });
+
+            fieldsArr[0].focus();
         },
 
         getDOM: function() {
@@ -102,6 +115,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         inputs = UICtrl.getInputs();
         newItem = budgetCtrl.addItem(inputs.type, inputs.description, inputs.value);
         UICtrl.addListItem(newItem, inputs.type);
+        UICtrl.clearFields(inputs);
     };
 
     var setupEventListeners = function() {
