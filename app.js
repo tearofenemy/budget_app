@@ -110,12 +110,23 @@ var UIController = (function() {
 })();
 
 var controller = (function(budgetCtrl, UICtrl) {
+
+
+    var updateBudget = function() {
+
+    };
+
     var ctrlAddItem = function() {
         var inputs, newItem;
         inputs = UICtrl.getInputs();
-        newItem = budgetCtrl.addItem(inputs.type, inputs.description, inputs.value);
-        UICtrl.addListItem(newItem, inputs.type);
-        UICtrl.clearFields(inputs);
+
+        if (inputs.description !== "" && !isNaN(inputs.value) && inputs.value > 0) {
+            newItem = budgetCtrl.addItem(inputs.type, inputs.description, inputs.value);
+            UICtrl.addListItem(newItem, inputs.type);
+            UICtrl.clearFields(inputs);
+
+            updateBudget();
+        }
     };
 
     var setupEventListeners = function() {
