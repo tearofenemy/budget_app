@@ -1,5 +1,4 @@
 var budgetController = (function() {
-
     function Expense(id, description, value) {
         this.id = id;
         this.description = description;
@@ -33,9 +32,9 @@ var budgetController = (function() {
                 ID = 0;
             }
 
-            if (type === 'exp') {
+            if (type === "exp") {
                 newItem = new Expense(ID, des, val);
-            } else if (type === 'inc') {
+            } else if (type === "inc") {
                 newItem = new Income(ID, des, val);
             }
 
@@ -46,17 +45,16 @@ var budgetController = (function() {
             console.log(data);
         }
     };
-
-
 })();
 
 var UIController = (function() {
-
     var DOMStrings = {
-        inputType: '.add__type',
-        inputDescription: '.add__description',
-        inputValue: '.add__value',
-        inputBtn: '.add__btn'
+        inputType: ".add__type",
+        inputDescription: ".add__description",
+        inputValue: ".add__value",
+        inputBtn: ".add__btn",
+        icomeContainer: ".income__list",
+        expenseContainer: ".expenses__list"
     };
 
     return {
@@ -67,6 +65,31 @@ var UIController = (function() {
                 value: document.querySelector(DOMStrings.inputValue).value
             };
         },
+
+        addListItem: function(obj, type) {
+            var html, newHtml, element;
+
+            if (type === "inc") {
+                element = DOMStrings.icomeContainer;
+                html = `<div class="item clearfix" id="income-%id%"><div class = "item__description">%description%</div>
+                <div class = "right clearfix"><div class = "item__value">+%value%</div><div class = "item__delete">
+                    <button class = "item__delete--btn"><i class = "ion-ios-close-outline"></i></button>
+                    </div></div></div>`;
+            } else if (type === "exp") {
+                element = DOMStrings.expenseContainer;
+                html = `<div class="item clearfix" id="expense-%id%"><div class = "item__description">%description%</div><
+                div class = "right clearfix" ><div class = "item__value">-%value%</div><div class = "item__percentage"> 21 % </div> 
+                <div class = "item__delete"><button class = "item__delete--btn"><i class = "ion-ios-close-outline"></i></button>
+                    </div></div ></div>`;
+            }
+
+            newHtml = html.replace("%id%", obj.id);
+            newHtml = newHtml.replace("%description%", obj.description);
+            newHtml = newHtml.replace("%value%", obj.value);
+
+            document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
+        },
+
         getDOM: function() {
             return DOMStrings;
         }
@@ -74,24 +97,23 @@ var UIController = (function() {
 })();
 
 var controller = (function(budgetCtrl, UICtrl) {
+    var ctrlAddItem = function() {
+        var inputs, newItem;
+        inputs = UICtrl.getInputs();
+        newItem = budgetCtrl.addItem(inputs.type, inputs.description, inputs.value);
+        UICtrl.addListItem(newItem, inputs.type);
+    };
 
     var setupEventListeners = function() {
-        var DOM = UIController.getDOM();
+        var DOM = UICtrl.getDOM();
 
-        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
+        document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
 
-        document.addEventListener('keypress', function(e) {
+        document.addEventListener("keypress", function(e) {
             if (e.keyCode === 13 || e.which === 13) {
                 ctrlAddItem();
             }
         });
-    };
-
-
-    var ctrlAddItem = function() {
-        var inputs, item;
-        inputs = UIController.getInputs();
-        item = budgetController.addItem(inputs.type, inputs.description, inputs.value);
     };
 
     return {
@@ -99,8 +121,6 @@ var controller = (function(budgetCtrl, UICtrl) {
             setupEventListeners();
         }
     };
-
-
 })(budgetController, UIController);
 
 controller.init();
